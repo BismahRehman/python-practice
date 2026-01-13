@@ -1,20 +1,12 @@
-
-import math
-import os
-import random
-import re
-import sys
-
-
-
 if __name__ == '__main__':
     n = int(input().strip())
-    if n%2!=0:
-      print("Weird")
-    elif n%2==0:
-         if n<5:
-             print("Not Weird")
-         elif 5<n<20:
-              print("Weird")
-         elif n>21:
-               print("Not Weird")
+    
+    if n % 2 != 0:
+        print("Weird")                 # Odd number
+    else:
+        if 2 <= n <= 5:
+            print("Not Weird")         # Even and 2–5
+        elif 6 <= n <= 20:
+            print("Weird")             # Even and 6–20
+        else:
+            print("Not Weird")         # Even and >20
