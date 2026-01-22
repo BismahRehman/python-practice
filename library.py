@@ -1,90 +1,113 @@
-
 book_list={}
 member_list={}
 
-  
+#add book datA
+def add_booK():
+    title= input("enter book title").split()
+    author = input ("enter author name").split()
+    ISBN = int(input("enter book ISBN Number"))
+    avability = True
+    booK_dic( title, author, avability, ISBN)
 
-def book():
-   title= input ( " enter the detail of book" \
-   "enter booK Title")
-   author =input( "Enter book author")
-   ISBN= input ( "Enter the ISBN") 
-   availability = True
-   book_dic(title, author, ISBN, availability)
-
-
-
-def book_dic(title, author, ISBN, availability):
+def booK_dic( title, author, avability, ISBN):
     book_dic={}
-    book_dic['title']=title
-    book_dic['author']=author
-    book_dic['availability']=availability 
-    print(book_dic)
+    book_dic["title"]=title
+    book_dic["author"]=author
+    book_dic["avability"]=avability
     book_list[ISBN]=book_dic
-    print(book_list)
+
+# add member data
+def add_memeber():
+    name=input("enter the name").split()
+    member_id=int( input ("enter the member id "))
+    list_of_borrow_book=[]
+    member_dic( name, list_of_borrow_book, member_id)
+    
+def member_dic( name, list_of_borrow_book, member_id):
+    member_dic={}
+    member_dic["name"]= name
+    member_dic["list_of_borrow_book"]=list_of_borrow_book
+    member_list[member_id]=member_dic
 
 
 
-def mem():
-   name= input("Enter your name")
-   member_id=input("Enter the Member id ")
-   li_of_borrow_book=[]
-   mem_dic(name, member_id,li_of_borrow_book)
+def borrow_booK():
+    borrow_book_member_id=int(input("enter your member id"))
+    borrow_booK_ISBN_number=int(input("enter the book ISBN number"))
+     
+    if borrow_booK_ISBN_number not in book_list:
+        print("book  not  found")
+        return
+    if borrow_book_member_id not in member_list:
+        print( "member not found")
+        return
 
+    if book_list[borrow_booK_ISBN_number]['avability']==True:
+        book_list[borrow_booK_ISBN_number]['avability']=False
+        member_list[borrow_book_member_id]['list_of_borrow_book'].append(borrow_booK_ISBN_number)
+        print("you borrow book successfully")
+    else:
+        print("book is alread borrowed")
 
-def mem_dic(name, member_id,li_of_borrow_book):
-    mem_dic={}
-    mem_dic['name']=name
-    mem_dic['list_of_borrow_book']=li_of_borrow_book
-    print(mem_dic)
-    member_list[member_id]=mem_dic
-    print(member_list)
-
-def  borrow_book():
-    borrow_member_id =input("enter you member id")
-    borrow_booK_ISBN=input("enter book ISBN")
-    for book in book_list:
-       if book_list[book]==borrow_booK_ISBN:
-          print(book_list[book])
+def return_book():
+    borrow_book_member_id=int(input("enter your member id"))
+    borrow_booK_ISBN_number=int(input("enter the book ISBN number"))
+    if borrow_book_member_id not in book_list:
+        print("book  not  found")
+        return
+    if borrow_booK_ISBN_number not in member_list:
+        print( "member not found")
+        return
+    
+    if borrow_booK_ISBN_number in  member_list[borrow_book_member_id]['list_of_borrow_book']:
        
+        book_list[borrow_booK_ISBN_number]['avability']=True
+        member_list[borrow_book_member_id]['list_of_borrow_book'].remove(borrow_booK_ISBN_number)
+        print ("you return book successful")
+    else:
+        print("you can't borrow this book")
+
+def view_all_book():
+    for isbn, details in book_list.items():
+        print("ISBN:", isbn,
+              "Title:", details["title"],
+              "Available:", details["avability"])
+        
+
+def view_all_member():
+    for member_id, details in member_list.items():
+        print("member_id:", member_id,
+              "name:", details["name"],
+              "Their_borrowed_book:", details["list_of_borrow_book"])
 
 
-m=0
-while m<= 10:
-  n=int( input( "what you want" \
-    "press 1 to add new member " \
-    "press 2 to add new book" \
-    "press 3 to borrow a book" \
-    "press 4 to return a book" \
-    "press 5 to check a availiables book" \
-    "press 6 to check a booked book" \
-    "press 7 to check total book and their availiabilities" \
-    "press 8 to check register members" \
-    "press 9 to check all member and their borrow book"))
+while True:
+  n=int( input( "what you want \n" 
+    "press 1 to add new member \n " 
+    "press 2 to add new book \n" 
+    "press 3 to borrow a book \n" 
+    "press 4 to return a book \n" 
+    "press 5 to check total book and their availiabilities \n" 
+    "press 6 to check all member and their borrow book \n"
+    "press 7 to quit "))
   
 
 
   if n==1:
-        mem()
+        add_memeber()
   elif n==2:
-        book()
+        add_booK()
   elif n==3:
-    borrow_book()
-
+        borrow_booK()
   elif n==4:
-    mem()
+        return_book()
   elif n==5:
-    mem()
+     print(book_list)
+     view_all_book()
   elif n==6:
-    mem()
-  elif n==7:
-    print(book_list)
-  elif n==8:
-    mem()
-  elif n==9:
     print(member_list)
-
-m=m+1
-
-
-   
+    view_all_member()
+  elif n==7:
+    break
+  else:
+     print("you enter wrong number")
