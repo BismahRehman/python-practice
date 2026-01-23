@@ -35,37 +35,43 @@ def borrow_booK():
     borrow_book_member_id=int(input("enter your member id"))
     borrow_booK_ISBN_number=int(input("enter the book ISBN number"))
      
-    if borrow_booK_ISBN_number not in book_list:
-        print("book  not  found")
-        return
-    if borrow_book_member_id not in member_list:
-        print( "member not found")
-        return
+    if borrow_booK_ISBN_number  in book_list:
+         if borrow_book_member_id not in member_list:
+      
 
-    if book_list[borrow_booK_ISBN_number]['avability']==True:
-        book_list[borrow_booK_ISBN_number]['avability']=False
-        member_list[borrow_book_member_id]['list_of_borrow_book'].append(borrow_booK_ISBN_number)
-        print("you borrow book successfully")
-    else:
-        print("book is alread borrowed")
+            if book_list[borrow_booK_ISBN_number]['avability']==True:
+               book_list[borrow_booK_ISBN_number]['avability']=False
+               member_list[borrow_book_member_id]['list_of_borrow_book'].append(borrow_booK_ISBN_number)
+               print("you borrow book successfully")
+            else:
+                print("book is alread borrowed")
+         else:
+            print("book  not  found")
+    else:          
+        print( "member not found")
+                
 
 def return_book():
     borrow_book_member_id=int(input("enter your member id"))
     borrow_booK_ISBN_number=int(input("enter the book ISBN number"))
-    if borrow_book_member_id not in book_list:
-        print("book  not  found")
-        return
-    if borrow_booK_ISBN_number not in member_list:
-        print( "member not found")
-        return
+    if borrow_book_member_id  in book_list:
+        
+         if borrow_booK_ISBN_number  in member_list:
+        
     
-    if borrow_booK_ISBN_number in  member_list[borrow_book_member_id]['list_of_borrow_book']:
+             if borrow_booK_ISBN_number in  member_list[borrow_book_member_id]['list_of_borrow_book']:
        
-        book_list[borrow_booK_ISBN_number]['avability']=True
-        member_list[borrow_book_member_id]['list_of_borrow_book'].remove(borrow_booK_ISBN_number)
-        print ("you return book successful")
+                 book_list[borrow_booK_ISBN_number]['avability']=True
+                 member_list[borrow_book_member_id]['list_of_borrow_book'].remove(borrow_booK_ISBN_number)
+                 print ("you return book successful")
+             else:
+               print("you can't borrow this book")
+         else:
+            print( "member not found")
+        
     else:
-        print("you can't borrow this book")
+        print("book  not  found")
+       
 
 def view_all_book():
     for isbn, details in book_list.items():
