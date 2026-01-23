@@ -17,6 +17,7 @@ class Student(Person):
         print (f"Student {self.name} is studying")
 
     def show_info(self):
+        super().show_info()
         print (self.student_id)
 
 class Teacher(Person):
