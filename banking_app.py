@@ -5,6 +5,10 @@ import os
 
 file='data.json'
 
+# ====================================
+# create custom error handling classes
+# ====================================
+
 class UserAlreadyExistsError(Exception):
     pass
 
@@ -13,7 +17,8 @@ class UserCannotExistsError(Exception):
 
 class InvalidCredentialsError(Exception):
     pass
-
+class InvalidAccountError(Exception):
+    pass
 
 class InvalidAmountError(Exception):
     pass
@@ -26,7 +31,9 @@ class InsufficientFundsError(Exception):
 class DataCorruptionError(Exception):
     pass
 
- 
+# ====================================
+# create User classes
+# ====================================
 class User:
     def __init__(self,username,hashed_password,user_id):
         self.username=username
@@ -41,7 +48,9 @@ class User:
             "accounts": []
         }
 
-
+# ====================================
+# create account classes
+# ====================================
 class Account(ABC):
  def __init__(self,user_id,account_id,account_type,balance):
         self.user_id=user_id
@@ -84,7 +93,9 @@ class CurrentAccount(Account):
         return True
 
 
-
+# ====================================
+# create Transaction classes
+# ====================================
 class Transaction:
     def __init__(self,user_id,account_id,amount,transaction_type):
         self.user_id=user_id
@@ -100,7 +111,9 @@ class Transaction:
             "transaction_type":self.transaction_type
         }
 
-
+# ====================================
+# create create account classes  
+# ====================================
 class CreateAccount:
     def __init__(self,user_id,account_id,account_type,balance):
         self.user_id=user_id
@@ -115,7 +128,9 @@ class CreateAccount:
             "account_type": self.account_type,
             "balance": self.balance
         }
-        
+# ====================================
+# create Database classes
+# ====================================     
 class DataBase:
     def __init__(self,file_path):
         self.file_path=file_path
@@ -139,6 +154,9 @@ class DataBase:
         with open (self.file_path,"w") as f:
             json.dump(data, f, indent=4)
 
+# ====================================
+# create Bank classes
+# ====================================
 class Bank:
     def __init__(self,data_file):
         self.data_file=data_file
@@ -156,24 +174,33 @@ class Bank:
         self.data_file.save_data(data)
         print(data['user'])
         self.createaccount(user_id=user_id,account_type=account_type)
+        print("hello")
     
 
     def createaccount(self,user_id,account_type,balance=0):
             data = self.data_file.load_data()
             for user in data['user']:
-               if user['user_id'] != user_id:
+              try:
+                 
+                if user_id != user['user_id'] :
+                   print(user)
+                   print(user_id)
+                   print (user['user_id'] )
                    raise UserCannotExistsError("user cannot exist")
-               if account_type=="Saving":
+                print(user_id)
+                if account_type=="Saving":
                        account_id=f"AS{len(data['account'])+1}"
-               elif account_type=="Current":
+                elif account_type=="Current":
                        account_id=f"AC{len(data['account'])+1}"
-            acc=CreateAccount(user_id=user_id,account_id=account_id,account_type=account_type,balance=balance)
-            data['account'].append(acc.to_dic())
-            user['accounts'].append({
+                acc=CreateAccount(user_id=user_id,account_id=account_id,account_type=account_type,balance=balance)
+                data['account'].append(acc.to_dic())
+                user['accounts'].append({
                    "account_id": account_id,
                    "account_type": account_type
                 })
-            self.data_file.save_data(data)
+                self.data_file.save_data(data)
+              except UserCannotExistsError as e:
+                  print(e)
 
          
 
@@ -181,10 +208,10 @@ class Bank:
         data = self.data_file.load_data()
         hashed= hashlib.sha256(password.encode()).hexdigest()
         for user in data["user"]:
-            if user["username"]==username or user["password"]==hashed:
+            if user["username"]==username and user["password"]==hashed:
+              print(username,hashed)
               return user
-            else :
-                raise  InvalidCredentialsError("invalid username or password")
+            raise  InvalidCredentialsError("invalid username or password")
             
     def get_account_data(self,account_id):
         data = self.data_file.load_data()
@@ -198,7 +225,7 @@ class Bank:
                         balance=acc["balance"]  
                     )
                 if acc["account_type"]=="Current":
-                    return  SavingAccount(
+                    return  CurrentAccount(
                         user_id=acc["user_id"],
                         account_id=acc["account_id"],
                         account_type=acc["account_type"],
@@ -210,17 +237,21 @@ class Bank:
         for user in data["user"]:
             if user["user_id"]==user_id:
                 for  acc in user['accounts']:
+                    try:
                       if account_id not in acc['account_id']:
-                          print(user['accounts'])
-                account=self.get_account_data(account_id)
-                account.deposit(amount)
-                for acct in data['account']:
-                    if acct['account_id']==account_id:
-                      acct["balance"] = account.get_balance
+                          raise InvalidAmountError (f"{user_id} does not have this id {account_id} account")
+                    except InvalidAmountError as e:
+                        print (e)
+                        break
+                    account=self.get_account_data(account_id)
+                    account.deposit(amount)
+                    for acct in data['account']:
+                        if acct['account_id']==account_id:
+                           acct["balance"] = account.get_balance
 
-                txt=Transaction(user_id=user_id,account_id=account_id,amount=amount,transaction_type="deposit")
-                data['transaction'].append(txt.to_dic())
-                self.data_file.save_data(data)
+                    txt=Transaction(user_id=user_id,account_id=account_id,amount=amount,transaction_type="deposit")
+                    data['transaction'].append(txt.to_dic())
+                    self.data_file.save_data(data)
 
             
 
@@ -229,35 +260,37 @@ class Bank:
         for user in data["user"]:
             if user["user_id"]==user_id:
                 for  acc in user['accounts']:
-                      if acc['account_id']==account_id:
-                       print(user['accounts'])
-                account=self.get_account_data(account_id)
-                account.withdraw(amount) 
-                for acct in data['account']:
-                     if acct['account_id']==account_id:
-                       acct["balance"] = account.get_balance
-
-                txt=Transaction(user_id=user_id,account_id=account_id,amount=amount,transaction_type="withdraw")
-                data['transaction'].append(txt.to_dic())
-                self.data_file.save_data(data)
+                    try:
+                        if account_id not in acc['account_id']:
+                          raise InvalidAmountError (f"{user_id} does not have this id {account_id} account")
+                    except InvalidAmountError as e:
+                        print (e)
+                        break
+                    account=self.get_account_data(account_id)
+                    account.withdraw(amount) 
+                    for acct in data['account']:
+                        if acct['account_id']==account_id:
+                           acct["balance"] = account.get_balance
+                    txt=Transaction(user_id=user_id,account_id=account_id,amount=amount,transaction_type="withdraw")
+                    data['transaction'].append(txt.to_dic())
+                    self.data_file.save_data(data)
     
 
 
     def get_balance(self,account_id):
         data = self.data_file.load_data()
-        for acc in data["account"]:
-            if acc["account_id"]==account_id:
-                user=self.get_account_data(account_id)
-                print(user.get_balance)
+        for acc in data['account']:
+             if acc['account_id'] == account_id:
+               user=self.get_account_data(account_id)
+               print(user.get_balance)
+               
+        
 
     def txt_history(self,account_id):
         data = self.data_file.load_data()
         for trans in data["transaction"]:
             if trans['account_id']==account_id:
                 print (trans)
-
-                
-
 
 database=DataBase(file)
 bank=Bank(database)
@@ -276,16 +309,18 @@ while True:
         if account==2:
             account_type="Current"
         try:
-         bank.register_user(username,password,account_type)
+          bank.register_user(username,password,account_type)
         except  UserAlreadyExistsError as e:
             print(e)
 
     elif choose==2:
         username=input("Enter username ")
         password=input("Enter password ")
-        user=bank.login(username,password)
-        print (user)
-        while True:
+        try:
+         user=bank.login(username,password)
+        
+        
+         while True:
              print("Enter only number \n1.Deposit \n2.Withdraw \n3.Check Balance \n4.Check Transaction History \n5.Create Account \n6.Logout")
              choose=int(input())
              if choose==1:
@@ -308,27 +343,34 @@ while True:
 
              elif choose==3:
                  account_id=input("Enter Account ID ")
-                 bank.get_balance(account_id)
+                 try:
+                  bank.get_balance(account_id)
+                 except InvalidAmountError as e:
+                     print(e)
 
              elif choose==4:
                  account_id=input("Enter Account ID ")
                  bank.txt_history(account_id)
 
              elif choose==5:
-                 user_id=input("Enter User Id ")
                  print ("1.Saving Account \n2.Current Account ")
                  account=int(input())
                  if account==1:
                     account_type="Saving"
                  if account==2:
                     account_type="Current"
-                 bank.register_user(username,password,account_type)
+                 try:
+                  bank.createaccount(user['user_id'],account_type)
+                 except UserCannotExistsError as e:
+                     print(e)
 
-             elif choose==5:
+             elif choose==6:
                  break
                
              else:
                  print ("Enter invalid number")
+        except InvalidCredentialsError as e:
+                 print(e)
                  
 
     elif choose==3:
