@@ -312,13 +312,34 @@ class Bank:
                     
     
 
+    #  # --------  get_balance  ---------
+    # def get_balance(self,account_id):
+    #     data = self.data_file.load_data()   # load data
+    #     for acc in data['account']: # check all account in json file
+    #          if acc['account_id'] == account_id:  # check account id
+    #             user=self.get_account_data(account_id) # create sub class of account object
+    #             print(user.get_balance)
+    #             return
+    #     raise  InvalidAccountError ("Invalid account ID")
+
+    
      # --------  get_balance  ---------
-    def get_balance(self,account_id):
+    def get_balance(self,account_id,user_id):
         data = self.data_file.load_data()   # load data
-        for acc in data['account']: # check all account in json file
-             if acc['account_id'] == account_id:  # check account id
-                user=self.get_account_data(account_id) # create sub class of account object
-                print(user.get_balance)
+        # for acc in data['account']: # check all account in json file
+        #      if acc['account_id'] == account_id:  # check account id
+        for user in data["user"]:    # all user  account one by one in user list in json file 
+            if user["user_id"]==user_id:   # match user id
+                for  acc in user['accounts']:  # check all account that hold by user
+                    try:
+                        if account_id not in acc['account_id']: # if account id cannot match by user account then raise error
+                          raise InvalidAccountError (f"{user_id} does not have this id {account_id} account")
+                        user=self.get_account_data(account_id) # create sub class of account object
+                        print(user.get_balance)
+
+                    except InvalidAccountError as e:
+                        print(e)
+        
            
         
                
@@ -330,6 +351,9 @@ class Bank:
             if trans['account_id']==account_id: # check account id
                print (trans)
 
+# ====================================
+# ------------Main--------------
+# ====================================
 database=DataBase(file)
 bank=Bank(database)
 
@@ -363,7 +387,7 @@ while True:
          while True:
              print("Enter only number \n1.Deposit \n2.Withdraw \n3.Check Balance \n4.Check Transaction History \n5.Create Account \n6.Logout")
              choose=input()
-             if choose==1:
+             if choose=="1":
                  amount=int(input("Enter Amount "))
                  account_id=input("Enter Account ID ")
                  try :
@@ -385,7 +409,7 @@ while True:
 
              elif choose=="3":
                  account_id=input("Enter Account ID ")
-                 bank.get_balance(account_id)
+                 bank.get_balance(account_id,user['user_id'])
                  
 
              elif choose=="4":
