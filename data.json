@@ -1,0 +1,71 @@
+{
+    "user": [
+        {
+            "user_id": "U1",
+            "username": "ali",
+            "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+            "accounts": [
+                {
+                    "account_id": "AS1",
+                    "account_type": "Saving"
+                }
+            ]
+        },
+        {
+            "user_id": "U2",
+            "username": "1",
+            "password": "86e68363a3da0c8a647ba9730882a43075e8a53a6c9dadfdc23a90466126f68f",
+            "accounts": [
+                {
+                    "account_id": "AS2",
+                    "account_type": "Saving"
+                }
+            ]
+        },
+        {
+            "user_id": "U3",
+            "username": "aaa",
+            "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+            "accounts": [
+                {
+                    "account_id": "AS3",
+                    "account_type": "Saving"
+                }
+            ]
+        }
+    ],
+    "account": [
+        {
+            "user_id": "U1",
+            "account_id": "AS1",
+            "account_type": "Saving",
+            "balance": 0
+        },
+        {
+            "user_id": "U2",
+            "account_id": "AS2",
+            "account_type": "Saving",
+            "balance": 0
+        },
+        {
+            "user_id": "U3",
+            "account_id": "AS3",
+            "account_type": "Saving",
+            "balance": 50
+        }
+    ],
+    "transaction": [
+        {
+            "user_id": "U3",
+            "account_id": "AS3",
+            "amount": 100,
+            "transaction_type": "deposit"
+        },
+        {
+            "user_id": "U3",
+            "account_id": "AS3",
+            "amount": 50,
+            "transaction_type": "withdraw"
+        }
+    ]
+}

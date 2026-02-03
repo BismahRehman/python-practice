@@ -45,7 +45,7 @@ class User:
 
 
 class Account(ABC):
-    def __init__(self, account_id, user_id,account_type, balance=0,):
+    def __init__(self, account_id, user_id,account_type, balance):
         self.account_id = account_id
         self.user_id = user_id
         self._balance = balance
@@ -165,7 +165,7 @@ class CreateAccount:
           elif account_type=="Current":
                account_id = f"AC{len(data["account"])}+1"
 
-          account = Account(account_id=account_id, user_id=user_id,account_type=account_type)
+          account = Account(account_id=account_id, user_id=user_id,account_type=account_type,balance=0)
           Data_base.save_data(self.data_base["account"].update(account.to_dict))
           print (f"your account is created with {account_id} id")
 
@@ -182,88 +182,132 @@ class Bank:
         def __init__(self,data_base):
              self.data_base=data_base
 
-        def get_account_data(self):
+        def get_account_data(self,account_data):
              data= self.data_base.load_data
-             for account in data["account"]:
-                  if account["account_type"]=="saving"  :
+             for account_data in data["account"]:
+                  if account_data["account_type"]=="saving"  :
                        return( SavingsAccount(
-                        iser_id=account["account_id"],
-                        user_id= account["user_id"],
-                            
+                        account_id=account_data["account_id"],
+                        user_id= account_data["user_id"],
+                        balance=account_data["balance"]                            
                        ))
-                  if account["account_type"]=="saving"  :
+                  if account_data["account_type"]=="saving"  :
                        return( CurrentAccount(
+                        account_id=account_data["account_id"],
+                        user_id= account_data["user_id"],
+                        balance=account_data["balance"] 
      
                        ))
                   
-        def deposite(self,amount,account_id):
-            self.get_account_data()
-            a=Account(account_id=account_id,user_id=user_id,account_type=account_type)
-            def withdraw(self,amount):
-                  def checkbalance(self,amount):
-                       
-             
-                     jj=0
+        def deposit(self, account_id, amount):
+         data = self.data_service.load_data()  # load database  for read
+
+         for acc in data["accounts"]:   # takes accounts form database
+            if acc["account_id"] == account_id:  # check account id match or not
+                account = self._get_account_object(acc) #    call self._get_account_object method  and return data from database
+                                                           # also create a saving or current account object
+                account.deposit(amount)    #Calls the deposit method of that account object.
+                acc["balance"] = account.get_balance()   #Updates the balance in the database dictionary
+
+                txn = Transaction(      # make transaction object
+                    f"T{len(data['transactions']) + 1}",    # give transaction_id
+                    account_id,        # account_id
+                    "DEPOSIT",         # transaction type
+                    amount               #amount
+                )
+                data["transactions"].append(txn.to_dict())   # update transaction data into database in transaction part
+                self.data_service.save_data(data)  # save updated data 
+                print(" Deposit successful!")
+                return
+
+        def withdraw(self, account_id, amount):
+          data = self.data_service.load_data()  # load database  for read
+
+          for acc in data["accounts"]:     # takes accounts form database
+            if acc["account_id"] == account_id:   # check account id match or not
+                account = self._get_account_object(acc)   #    call self._get_account_object method  and return data from database
+                                                           # also create a saving or current account object
+                account.withdraw(amount)              #Calls the deposit method of that account object.
+                acc["balance"] = account.get_balance()     #Updates the balance in the database dictionary
 
 
-data_service=Data_base(DATA_FILE)
-auth=Auth(data_service)
-bank=Bank(data_service)
+                txn = Transaction(     # make transaction object
+                    f"T{len(data['transactions']) + 1}",  # give transaction_id
+                    account_id,  # account_id
+                    "WITHDRAW",  # transaction type
+                    amount       #amount
+                )
+                data["transactions"].append(txn.to_dict())    # update transaction data into database in transaction part
+                self.data_service.save_data(data)  # save updated data 
+                print(" Withdrawal successful!")
+                return
 
+        def check_balance(self, account_id):
+         data = self.data_service.load_data()    # load database  for read
+         for acc in data["accounts"]:    # takes accounts form database
+            if acc["account_id"] == account_id:    # check account id match or not 
+                print(f" Current Balance: {acc['balance']}")
+
+        def transaction_history(self, account_id):
+         data = self.data_service.load_data()    # load database  for read
+         print("\n--- Transaction History ---")
+         for txn in data["transactions"]:     # takes transactions form database
+            if txn["account_id"] == account_id:        # check account id match or not
+                print(txn)
+
+
+# =======================
+# Main CLI
+# =======================
+data_service = Data_base(DATA_FILE)
+auth_service = Auth(data_service)
+banking_service = Bank(data_service)
 
 while True:
-     
-     print("1.Registeration \n2.Login \n3.Exit \n Enter Only Number")
-     choose =int(input())
-     if choose==1:
-          username=input("Enter Username : ")
-          password=input("Enter Password : ") 
-          print("which account you want to make \n 1.Saving Account \n 2.Current Account")
-          acc= int(input())
-          if acc==1:
-               account_type="Saving"
-          elif acc==2:
-               account_type="Current"
-           
-          auth.register_user(username=username,password=password,account_type=account_type)
+    print("\n1. Register\n2. Login\n3. Exit")
+    choice = input("Choose option: ")
 
-     elif choose==1 :
-          username=input("Enter Username : ")
-          password=input("Enter Password : ") 
+    try:
+         if choice == "1":
+                username = input("Username: ")
+                password = input("Password: ")
+                print("1. Savings Account\n2. Current Account")
+                acc_choice = input("Choose account type: ")
+                acc_type = "SAVINGS" if acc_choice == "1" else "CURRENT"
+                auth_service.register_user(username, password, acc_type)
 
-          user =auth.login_user(username=username,password=password)
+         elif choice == "2":
+                username = input("Username: ")
+                password = input("Password: ")
+                user = auth_service.login(username, password)
+                print("Login successful!")
+
+                while True:
+                    print("\n1.Deposit 2.Withdraw 3.Balance 4.History 5.Logout")
+                    opt = input("Choose: ")
+
+                    if opt == "1":
+                        amt = float(input("Amount: "))
+                        banking_service.deposit(user["account_id"], amt)
+
+                    elif opt == "2":
+                        amt = float(input("Amount: "))
+                        banking_service.withdraw(user["account_id"], amt)
+
+                    elif opt == "3":
+                        banking_service.check_balance(user["account_id"])
+
+                    elif opt == "4":
+                        banking_service.transaction_history(user["account_id"])
+
+                    elif opt == "5":
+                        break
+
+         elif choice == "3":
+                print("Goodbye!")
+                break
+
+    except Exception as e:
+            print(" Error:", e)
 
 
-           
-          print("1.Deposite \n2.Withdraw \n3.Check Balance \n4.Transaction History \n5.Logout 6.create new account \n Enter Only Number")
-          choose =int(input())
-          
-          if choose==1:
-               amount= float(input("Enter Amount"))
-               bank.deposite(user["account_id"],amount)
-               
-
-
-
-               
-  
-     
-                  
-
-
-
-             
-
-
-             
-     
-
-                
-          
-
-           
-           
-           
-               
-
-        

@@ -1,0 +1,127 @@
+{
+    "users": [
+        {
+            "user_id": "U1",
+            "username": "1",
+            "password": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+            "account_id": "A1"
+        },
+        {
+            "user_id": "U2",
+            "username": "2",
+            "password": "c6f3ac57944a531490cd39902d0f777715fd005efac9a30622d5f5205e7f6894",
+            "account_id": "A2"
+        },
+        {
+            "user_id": "U3",
+            "username": "tt",
+            "password": "0e07cf830957701d43c183f1515f63e6b68027e528f43ef52b1527a520ddec82",
+            "account_id": "A3"
+        },
+        {
+            "user_id": "U4",
+            "username": "ali",
+            "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+            "account_id": "A4"
+        },
+        {
+            "user_id": "U5",
+            "username": "22",
+            "password": "785f3ec7eb32f30b90cd0fcf3657d388b5ff4297f2f9716ff66e9b69c05ddd09",
+            "account_id": "A5"
+        },
+        {
+            "user_id": "U6",
+            "username": "",
+            "password": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "account_id": "A6"
+        },
+        {
+            "user_id": "U7",
+            "username": "aaaa",
+            "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+            "account_id": "A7"
+        }
+    ],
+    "accounts": [
+        {
+            "account_id": "A1",
+            "user_id": "U1",
+            "account_type": "SAVINGS",
+            "balance": 0
+        },
+        {
+            "account_id": "A2",
+            "user_id": "U2",
+            "account_type": "SAVINGS",
+            "balance": 2.0
+        },
+        {
+            "account_id": "A3",
+            "user_id": "U3",
+            "account_type": "SAVINGS",
+            "balance": 0.0
+        },
+        {
+            "account_id": "A4",
+            "user_id": "U4",
+            "account_type": "CURRENT",
+            "balance": 0
+        },
+        {
+            "account_id": "A5",
+            "user_id": "U5",
+            "account_type": "CURRENT",
+            "balance": 102.0
+        },
+        {
+            "account_id": "A6",
+            "user_id": "U6",
+            "account_type": "CURRENT",
+            "balance": 0
+        },
+        {
+            "account_id": "A7",
+            "user_id": "U7",
+            "account_type": "SAVINGS",
+            "balance": 0
+        }
+    ],
+    "transactions": [
+        {
+            "transaction_id": "T1",
+            "account_id": "A2",
+            "type": "DEPOSIT",
+            "amount": 2.0,
+            "timestamp": "2026-01-26 19:53:27"
+        },
+        {
+            "transaction_id": "T2",
+            "account_id": "A3",
+            "type": "DEPOSIT",
+            "amount": 400.0,
+            "timestamp": "2026-01-26 20:25:37"
+        },
+        {
+            "transaction_id": "T3",
+            "account_id": "A3",
+            "type": "WITHDRAW",
+            "amount": 400.0,
+            "timestamp": "2026-01-26 20:28:10"
+        },
+        {
+            "transaction_id": "T4",
+            "account_id": "A5",
+            "type": "DEPOSIT",
+            "amount": 2.0,
+            "timestamp": "2026-02-01 11:06:00"
+        },
+        {
+            "transaction_id": "T5",
+            "account_id": "A5",
+            "type": "DEPOSIT",
+            "amount": 100.0,
+            "timestamp": "2026-02-01 11:41:21"
+        }
+    ]
+}
