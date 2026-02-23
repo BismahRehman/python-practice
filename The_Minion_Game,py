@@ -1,0 +1,116 @@
+def minion_game(st):
+    # your code goes here
+
+    string=st
+    word=string
+    l=list(string)
+
+    for i in range(len(word)):
+        if "A" in word:
+          word= word.replace("A","")
+        if "E" in word:
+          word= word.replace("E","")
+        if "I" in word:
+          word= word.replace("I","")
+        if "O" in word:
+          word= word.replace("O","")
+        if "U" in word:
+          word= word.replace("U","")
+    
+    string1=string
+    c=0
+    for i in range(len(string1)):
+       
+        if len(word)!=0 and string.startswith(word[0]):
+            for i in range(len(string)):
+               a=string[:i+1]
+               c=c+1
+
+            l.remove(l[0])
+            string="".join(l)
+            word= list(word)
+            word.remove(word[0])
+            word="".join(word)
+        else:
+           l.remove(l[0])
+           string="".join(l)
+
+
+  
+    string=st
+    word=string
+    l=list(string)
+    for i in range(len(word)):
+        if "B" in word:
+          word= word.replace("B","")
+        if "C" in word:
+          word= word.replace("C","")
+        if "d" in word:
+          word= word.replace("D","")
+        if "F" in word:
+          word= word.replace("F","")
+        if "G" in word:
+          word= word.replace("G","")
+        if "H" in word:
+          word= word.replace("H","")
+        if "J" in word:
+          word= word.replace("J","")
+        if "K" in word:
+          word= word.replace("K","")
+        if "L" in word:
+          word= word.replace("L","")
+        if "M" in word:
+          word= word.replace("M","")
+        if "N" in word:
+          word= word.replace("N","")
+        if "P" in word:
+          word= word.replace("P","")
+        if "Q" in word:
+          word= word.replace("Q","")
+        if "R" in word:
+          word= word.replace("R","")
+        if "S" in word:
+          word= word.replace("S","")
+        if "T" in word:
+          word= word.replace("T","")
+        if "V" in word:
+          word= word.replace("V","")
+        if "W" in word:
+          word= word.replace("W","")
+        if "X" in word:
+          word= word.replace("X","")
+        if "Y" in word:
+          word= word.replace("Y","")
+        if "Z" in word:
+          word= word.replace("Z","")
+
+   
+    string1=string
+    d=0
+    for i in range(len(string1)):
+        if len(word)!=0 and string.startswith(word[0]):
+            for i in range(len(string)):
+               a=string[:i+1]
+               d=d+1
+          
+            l.remove(l[0])
+            string="".join(l)
+            word= list(word)
+            word.remove(word[0])
+            word="".join(word)
+        else:
+           l.remove(l[0])
+           string="".join(l)
+
+
+    if c>d:
+       print(f"Stuart {c}")
+    elif  d>c:
+       print(f"Kevin {d}")
+    else:
+        print("Draw")
+        
+
+if __name__ == '__main__':
+    s = input()
+    minion_game(s)
